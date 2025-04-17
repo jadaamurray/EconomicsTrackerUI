@@ -35,8 +35,8 @@ const LoginPage = () => {
     setError(null);
     try {
       await login(formData); 
-      //navigate('/dashboard');
-    } catch (err) {
+      navigate('/dashboard');
+    } catch (error) {
       setError(
         error.response?.data?.message ||
         error.message ||
