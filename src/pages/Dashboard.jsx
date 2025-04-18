@@ -12,11 +12,14 @@ import {
   Divider
 } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import EconomicMap from '../components/EconomicMap';
+
 
 const Dashboard = () => {
   const { user, logout } = useApp();
   const navigate = useNavigate();
   const [economicData, setEconomicData] = useState(null);
+  const [regionalData, setRegionalData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Sample economic data - replace with your actual API call
@@ -32,6 +35,29 @@ const Dashboard = () => {
         { month: 'Mar', gdp: 3.7, inflation: 2.5, unemployment: 3.6 },
         { month: 'Apr', gdp: 3.9, inflation: 2.7, unemployment: 3.5 },
         { month: 'May', gdp: 4.1, inflation: 2.9, unemployment: 3.4 },
+      ];
+      const regionalData = [
+        {
+          region: "United States",
+          gdp: 2.3,
+          inflation: 3.2,
+          latitude: 37.0902,
+          longitude: -95.7129
+        },
+        {
+          region: "United Kingdom",
+          gdp: 1.8,
+          inflation: 2.9,
+          latitude: 55.3781,
+          longitude: -3.4360
+        },
+        {
+          region: "Germany",
+          gdp: 1.5,
+          inflation: 2.7,
+          latitude: 51.1657,
+          longitude: 10.4515
+        }
       ];
       
       setEconomicData(mockData);
@@ -68,23 +94,29 @@ const Dashboard = () => {
         </Button>
       </Box>
 
-      <Grid container spacing={3}>
-        {/* User Profile Card */}
-        <Grid item xs={12} md={4}>
+      {/* User Profile Card */}
+      <Grid item xs={12} md={4}>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                User Profile
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-              <Typography>Email: {user.email}</Typography>
-              <Typography>User ID: {user.id}</Typography>
-              <Typography>
-                Roles: {user.roles?.join(', ') || 'User'}
+                Welcome back
               </Typography>
             </CardContent>
           </Card>
         </Grid>
+
+      <Typography variant="h4" gutterBottom>
+        Regional Economic Data
+      </Typography>
+      
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <EconomicMap regionalData={regionalData} />
+        </CardContent>
+      </Card>
+
+      <Grid container spacing={3}>
+        
 
         {/* Key Metrics Card */}
         <Grid item xs={12} md={8}>
