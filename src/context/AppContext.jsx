@@ -48,6 +48,7 @@ export function AppProvider({ children }) {
     try {
       console.log('Making request to:', `${import.meta.env.VITE_API_BASE_URL}/Account/login`);
       const response = await apiClient.post('/Account/login', formData);
+      // DEBUG
       console.group('[DEBUG] Response Inspection');
       console.log('Full response:', response);
       console.log('Status code:', response.status);
@@ -55,6 +56,7 @@ export function AppProvider({ children }) {
       console.log('Data type:', typeof response.data);
       console.log('Data keys:', response.data ? Object.keys(response.data) : 'null');
       console.groupEnd();
+      //
       if (!response.data?.token) {
         throw new Error(response.data?.message ||
           'Authentication token missing from server response'
@@ -68,15 +70,17 @@ export function AppProvider({ children }) {
         roles: response.data.roles || ['User'] // default role is user
       };
       localStorage.setItem('authToken', response.data.token);
-      //localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('user', JSON.stringify(userData));
       setUser(userData);
+      // DEBUG
       console.group('User information');
-      console.log('token: ', token);
-      console.log('id: ', id);
-      console.log('email: ', email);
-      console.log('roles: ', roles);
+      console.log('token: ', userData.token);
+      console.log('id: ', userData.id);
+      console.log('email: ', userData.email);
+      console.log('roles: ', userData.roles);
       console.groupEnd();
-      return { token: response.data.token, user: userData };
+      //
+      return userData;
     } catch (error) {
       console.error('Login Error Details:', {
         error: error.message,

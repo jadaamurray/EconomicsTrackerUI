@@ -2,11 +2,10 @@ import { useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom';
 import './App.css'
 import LoginPage from './pages/Login'; 
+import Dashboard from './pages/Dashboard.jsx';
 import { useApp } from './context/AppContext.jsx';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     < Routes >
     <Route path="/login" element={<LoginPage />} />
