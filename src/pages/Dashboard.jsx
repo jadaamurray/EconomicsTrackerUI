@@ -99,7 +99,7 @@ const Dashboard = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Welcome back
+                Welcome back {user.firstName}
               </Typography>
             </CardContent>
           </Card>

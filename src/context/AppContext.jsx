@@ -67,6 +67,8 @@ export function AppProvider({ children }) {
         token: response.data.token,
         id: response.data.userId,
         email: response.data.email,
+        firstName: response.data.firstName,
+        lastName: response.data.lastName,
         roles: response.data.roles || ['User'] // default role is user
       };
       localStorage.setItem('authToken', response.data.token);
@@ -78,6 +80,8 @@ export function AppProvider({ children }) {
       console.log('id: ', userData.id);
       console.log('email: ', userData.email);
       console.log('roles: ', userData.roles);
+      console.log('firstName: ', userData.firstName);
+      console.log('lastName: ', userData.lastName);
       console.groupEnd();
       //
       return userData;

@@ -31,7 +31,9 @@ apiClient.interceptors.response.use(
         token: response.data.token,
         userId: response.data.userId,
         email: response.data.email,
-        roles: response.data.roles
+        roles: response.data.roles,
+        firstName: response.data.firstName,
+        lastName: response.data.lastName
       }
     }
   },
