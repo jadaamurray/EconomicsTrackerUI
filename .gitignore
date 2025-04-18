@@ -8,9 +8,12 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+bower_components
 dist
 dist-ssr
 *.local
+**/*.backup.*
+**/*.back.*
 
 # Editor directories and files
 .vscode/*
