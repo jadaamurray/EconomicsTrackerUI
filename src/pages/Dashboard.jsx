@@ -95,19 +95,22 @@ const Dashboard = () => {
       </Box>
 
       {/* User Profile Card */}
-      <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Welcome back {user.firstName}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+     
 
-      <Typography variant="h4" gutterBottom>
-        Regional Economic Data
+      <Typography variant="h6" gutterBottom>
+        Welcome back {user.firstName}
       </Typography>
+
+
+      <Grid item xs={12} md={4}>
+        <Card>
+          <CardContent>
+            <Typography variant="h4" gutterBottom>
+              Regional Economic Data
+            </Typography>
+          </CardContent>
+        </Card>
+      </Grid>
       
       <Card sx={{ mb: 3 }}>
         <CardContent>
