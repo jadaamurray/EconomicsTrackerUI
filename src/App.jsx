@@ -12,9 +12,12 @@ const NO_HEADER_PATHS = ['/login', '/register'];
 function App() {
   const { isAuthenticated } = useAuth(); // Get auth state from context
   const location = useLocation();
+
+   // Check if header should be visible
+   const showHeader = !NO_HEADER_PATHS.includes(location.pathname);
   return (
     <>
-    <Header/>
+    {showHeader && <Header />}
     <main>
     < Routes >
     <Route path="/login" element={<LoginPage />} />
@@ -23,13 +26,16 @@ function App() {
       element={
         localStorage.getItem('authToken') ? 
           <Dashboard /> : 
-          <Navigate to="/login" />
+          <Navigate to="/login" state={{ from: location }} replace />
       } 
     />
-    <Route path="*" element={<Navigate to="/login" />} />
+    <Route path="*" 
+    element={isAuthenticated ? "/dashboard" : "/login"} replace
+     />
   </Routes >
   </main>
+  </>
   );
 }
 
-export default App
+export default App;
