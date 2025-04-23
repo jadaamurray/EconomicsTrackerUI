@@ -4,15 +4,16 @@
 // dont use anchor - more than a single page, will refresh, use link
 // link for every single navigable to page in the header
 // can only see profile jeader is the user is logged in
+//import '~/src/styles/header.css';
 import { AppBar, Toolbar, Typography, Button, Box, Avatar } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useApp } from '../context/AppContext';
 
-const isMobile = useMediaQuery('(max-width:600px)');
+//const isMobile = useMediaQuery('(max-width:600px)');
 
 const Header = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, } = useApp();
   const navigate = useNavigate();
 
   return (

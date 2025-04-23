@@ -1,20 +1,23 @@
-import { useState } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom';
-import './App.css'
-import LoginPage from './pages/Login'; 
-import Dashboard from './pages/Dashboard.jsx';
-import Header from './components/Header';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useApp } from './context/AppContext.jsx';
+import './App.css';
+import LoginPage from './pages/Login.jsx'; 
+import Dashboard from './pages/Dashboard.jsx';
+import Header from './components/Header.jsx';
 
 // Pages where header should be hidden
 const NO_HEADER_PATHS = ['/login', '/register'];
 
 function App() {
-  const { isAuthenticated } = useAuth(); // Get auth state from context
+  const { user, loading, isAuthenticated } = useApp();
   const location = useLocation();
 
    // Check if header should be visible
    const showHeader = !NO_HEADER_PATHS.includes(location.pathname);
+
+   if (loading) {
+    return <div className="loading-spinner">Loading...</div>;
+  }
   return (
     <>
     {showHeader && <Header />}
