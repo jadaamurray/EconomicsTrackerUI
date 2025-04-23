@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useApp } from './context/AppContext.jsx';
 import './App.css';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from './theme';
 import LoginPage from './pages/Login.jsx'; 
 import Dashboard from './pages/Dashboard.jsx';
 import Header from './components/Header.jsx';
@@ -19,6 +21,7 @@ function App() {
     return <div className="loading-spinner">Loading...</div>;
   }
   return (
+    <ThemeProvider theme={theme}>
     <>
     {showHeader && <Header />}
     <main>
@@ -38,6 +41,8 @@ function App() {
   </Routes >
   </main>
   </>
+  </ThemeProvider>
+
   );
 }
 

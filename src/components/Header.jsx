@@ -4,7 +4,7 @@
 // dont use anchor - more than a single page, will refresh, use link
 // link for every single navigable to page in the header
 // can only see profile jeader is the user is logged in
-//import '~/src/styles/header.css';
+import '../../styles/header.css';
 import { AppBar, Toolbar, Typography, Button, Box, Avatar } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Link, useNavigate } from 'react-router-dom';
@@ -22,11 +22,10 @@ const Header = () => {
         {/* Logo/Title */}
         <Typography 
           variant="h6" 
-          component={Link} 
-          to="/"
+          component={Link} to="/dashboard"
           sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}
         >
-          MyApp
+          Economics Tracker
         </Typography>
 
         {/* Conditional rendering based on auth */}
@@ -38,7 +37,7 @@ const Header = () => {
             </Button>
           </Box>
         ) : (
-          <Button color="inherit" component={Link} to="/login">
+          <Button color="error" component={Link} to="/login">
             Login
           </Button>
         )}
