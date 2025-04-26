@@ -1,2 +1,82 @@
 /* styles for each page
 make separate files for each pages or have a master on but if you have a master one, change the title of this page */
+.header-container {
+    /* Ensures header stays on top */
+    position: sticky;
+    top: 0;
+    z-index: 1100; /* Above most content but below modals */
+  }
+  
+  /* App bar styling */
+  .header-appbar {
+    background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  /* Toolbar layout */
+  .header-toolbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 24px !important;
+    min-height: 64px !important;
+  }
+  
+  /* Logo/text link */
+  .header-title {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* User greeting text */
+  .header-greeting {
+    margin-right: 16px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  
+  /* Avatar styling */
+  .header-avatar {
+    width: 36px;
+    height: 36px;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    transition: transform 0.2s;
+  }
+  
+  .header-avatar:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Button styles */
+  .header-button {
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    margin-left: 8px !important;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 600px) {
+    .header-toolbar {
+      padding: 0 12px !important;
+    }
+    
+    .header-greeting {
+      display: none; /* Hide greeting text on mobile */
+    }
+    
+    .header-title {
+      font-size: 1rem !important;
+    }
+  }
+  
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .header-appbar {
+      background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%);
+    }
+  }
