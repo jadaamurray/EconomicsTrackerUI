@@ -6,6 +6,7 @@ import theme from './theme';
 import LoginPage from './pages/Login.jsx'; 
 import Dashboard from './pages/Dashboard.jsx';
 import RegionsPage from './pages/Regions.jsx';
+import IndicatorsPage from './pages/Indicators.jsx';
 import Header from './components/Header.jsx';
 
 // Pages where header should be hidden
@@ -37,6 +38,13 @@ function App() {
       } 
     />
     <Route path="/regions"
+    element={
+      localStorage.getItem('authToken') ?
+      <RegionsPage /> :
+      <Navigate to="/login" state={{ from: location }} replace />
+    }
+    />
+    <Route path="/indicators"
     element={
       localStorage.getItem('authToken') ?
       <RegionsPage /> :

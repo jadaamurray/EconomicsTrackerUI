@@ -45,6 +45,7 @@ export function AppProvider({ children }) {
     () => !!localStorage.getItem('authToken')
   );
   //const [economicData, setEconomicData] = useState([]);
+  const [indicatorData, setIndicatorData] = useSate([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -117,14 +118,14 @@ export function AppProvider({ children }) {
       setUser(userData);
       setIsAuthenticated(true);
       // DEBUG
-      console.group('User information');
+      /*console.group('User information');
       console.log('token: ', userData.token);
       console.log('id: ', userData.id);
       console.log('email: ', userData.email);
       console.log('roles: ', userData.roles);
       console.log('firstName: ', userData.firstName);
       console.log('lastName: ', userData.lastName);
-      console.groupEnd();
+      console.groupEnd();*/
       //
       return userData;
     } catch (error) {
@@ -146,22 +147,21 @@ export function AppProvider({ children }) {
     setUser(null);
     navigate('/login');
   };
-  /*
+  
     // Fetch economic data
-    const fetchEconomicData = async () => {
+    const fetchIndicatorData = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get('/api/economic-data', {
+        const { data } = await axios.get('/api/indicator', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-        setEconomicData(data);
+        setIndicatorData(data);
       } finally {
         setLoading(false);
       }
     };
-    */
 
 
   return (
@@ -171,6 +171,7 @@ export function AppProvider({ children }) {
       isAuthenticated,
       login,
       logout,
+      fetchIndicatorData
     }}>
       {children}
     </AppContext.Provider>
