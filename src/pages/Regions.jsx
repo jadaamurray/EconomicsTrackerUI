@@ -1,22 +1,24 @@
 import React from 'react';
-import { 
-  Box, 
-  Typography, 
-  Card, 
-  CardContent, 
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
   Grid,
   Tabs,
   Tab,
   useTheme
 } from '@mui/material';
-import { 
-  MapContainer, 
-  TileLayer, 
+import {
+  MapContainer,
+  TileLayer,
   GeoJSON,
-  Tooltip 
+  Tooltip
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import regionsData from '../data/regions-geo.json'; // Your GeoJSON data
+import EconomicMap from '../components/EconomicMap';
+
 
 const RegionsPage = () => {
   const theme = useTheme();
@@ -46,7 +48,7 @@ const RegionsPage = () => {
   const getRegionStyle = (feature) => {
     const regionName = feature.properties.name;
     return {
-      fillColor: economicData[regionName] ? 
+      fillColor: economicData[regionName] ?
         theme.palette.success.main : theme.palette.grey[300],
       weight: 2,
       opacity: 1,
@@ -57,7 +59,7 @@ const RegionsPage = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ 
+      <Typography variant="h4" sx={{
         mb: 3,
         color: theme.palette.primary.dark,
         fontWeight: 600
@@ -70,38 +72,29 @@ const RegionsPage = () => {
         <Grid item xs={12} md={8}>
           <Card sx={{ height: '100%' }}>
             <CardContent sx={{ height: '500px', p: 0 }}>
-              <MapContainer
-                center={[37.8, -96.9]}
-                zoom={4}
-                style={{ height: '100%', width: '100%' }}
-              >
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <GeoJSON
-                  data={regionsData}
-                  style={getRegionStyle}
-                  onEachFeature={onEachFeature}
-                />
-                {selectedRegion && (
-                  <Tooltip direction="top" sticky>
-                    {selectedRegion}
-                  </Tooltip>
-                )}
-              </MapContainer>
+              <EconomicMap
+                regionsData={regionsData}
+                onRegionHover={onEachFeature}
+                regionStyle={getRegionStyle}
+              />
+              {selectedRegion && (
+                <Tooltip direction="top" sticky>
+                  {selectedRegion}
+                </Tooltip>
+              )}
             </CardContent>
           </Card>
         </Grid>
 
         {/* Data Column */}
         <Grid item xs={12} md={4}>
-          <Card sx={{ 
+          <Card sx={{
             height: '100%',
             bgcolor: theme.palette.background.paper
           }}>
             <CardContent>
-              <Tabs 
-                value={activeTab} 
+              <Tabs
+                value={activeTab}
                 onChange={handleTabChange}
                 sx={{ mb: 2 }}
               >
@@ -115,22 +108,22 @@ const RegionsPage = () => {
                   <Typography variant="h6" sx={{ mb: 2 }}>
                     {selectedRegion}
                   </Typography>
-                  <Box sx={{ 
+                  <Box sx={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(2, 1fr)',
                     gap: 2
                   }}>
-                    <StatCard 
-                      title="GDP (Billion)" 
-                      value={economicData[selectedRegion]?.gdp || 'N/A'} 
+                    <StatCard
+                      title="GDP (Billion)"
+                      value={economicData[selectedRegion]?.gdp || 'N/A'}
                     />
-                    <StatCard 
-                      title="Growth (%)" 
-                      value={economicData[selectedRegion]?.growth || 'N/A'} 
+                    <StatCard
+                      title="Growth (%)"
+                      value={economicData[selectedRegion]?.growth || 'N/A'}
                     />
-                    <StatCard 
-                      title="Unemployment (%)" 
-                      value={economicData[selectedRegion]?.unemployment || 'N/A'} 
+                    <StatCard
+                      title="Unemployment (%)"
+                      value={economicData[selectedRegion]?.unemployment || 'N/A'}
                     />
                   </Box>
                 </Box>
@@ -149,7 +142,7 @@ const RegionsPage = () => {
 
 // Reusable stat card component
 const StatCard = ({ title, value }) => (
-  <Card sx={{ 
+  <Card sx={{
     p: 1.5,
     textAlign: 'center',
     bgcolor: 'background.default'

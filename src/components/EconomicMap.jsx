@@ -8,7 +8,8 @@ import geoJsonData from '../data/regions-geo.json';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
-let DefaultIcon = L.icon({
+// Initialise default icon
+const DefaultIcon = L.icon({
   iconUrl: icon,
   shadowUrl: iconShadow,
   iconSize: [25, 41],
@@ -21,23 +22,25 @@ L.Marker.prototype.options.icon = DefaultIcon;
 const EconomicMap = ({ regionalData }) => {
   const [hoveredRegion, setHoveredRegion] = useState(null);
 
-  // Sample GeoJSON - replace with your actual data
-  const geoJsonData = {
-    type: "FeatureCollection",
-    features: regionalData.map(region => ({
-      type: "Feature",
-      properties: {
-        name: region.region,
-        gdp: region.gdp,
-        inflation: region.inflation
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [region.longitude, region.latitude] // Add these to your data
-      }
-    }))
+  // Style function for regions
+  const regionStyle = (feature) => ({
+    fillColor: getRegionColor(feature.properties.gdp),
+    weight: 2,
+    opacity: 1,
+    color: '#ffffff',
+    fillOpacity: 0.7,
+    radius: 8
+  });
+
+  // Color based on GDP
+  const getRegionColor = (gdp) => {
+    if (!gdp) return '#cccccc';
+    return gdp > 500 ? '#4daf4a' : // Green for high GDP
+      gdp > 300 ? '#377eb8' : // Blue for medium
+        '#e41a1c';              // Red for low
   };
 
+  // Feature interaction handlers
   const onEachFeature = (feature, layer) => {
     layer.on({
       mouseover: () => setHoveredRegion(feature.properties.name),
@@ -58,38 +61,14 @@ const EconomicMap = ({ regionalData }) => {
         />
 
         <GeoJSON
-          data={geoJsonData}
+          data={regionalData}
+          style={regionStyle}
           onEachFeature={onEachFeature}
-          pointToLayer={(feature, latlng) => {
-            return L.circleMarker(latlng, {
-              radius: 8,
-              fillColor: "#ff7800",
-              color: "#000",
-              weight: 1,
-              opacity: 1,
-              fillOpacity: 0.8
-            });
-          }}
         />
 
         {hoveredRegion && (
-          <Tooltip
-            position={[
-              geoJsonData.features.find(f => f.properties.name === hoveredRegion)?.geometry.coordinates[1],
-              geoJsonData.features.find(f => f.properties.name === hoveredRegion)?.geometry.coordinates[0]
-            ]}
-            permanent={false}
-            direction="top"
-          >
-            <div>
-              <h4>{hoveredRegion}</h4>
-              <p>GDP: {
-                regionalData.find(r => r.region === hoveredRegion)?.gdp || 'N/A'
-              }%</p>
-              <p>Inflation: {
-                regionalData.find(r => r.region === hoveredRegion)?.inflation || 'N/A'
-              }%</p>
-            </div>
+          <Tooltip direction="top" sticky>
+          {hoveredRegion}
           </Tooltip>
         )}
       </MapContainer>

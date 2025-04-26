@@ -44,7 +44,7 @@ const Header = () => {
         <Typography
           variant="h6"
           component={Link}
-          to="/"
+          to="/dashboard"
           sx={{
             textDecoration: 'none',
             color: 'white',

@@ -86,17 +86,28 @@ const Dashboard = () => {
   }
 
   return (
-    <Box>
+
+    <Box sx={{ mt: 4 }}>
       {/* User Profile Card */}
       <Grid item xs={12} md={4}>
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Welcome back {user.firstName}
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center', // Horizontal centering
+            alignItems: 'center',    // Vertical centering
+            height: '100%',          // Takes full height of grid cell
+          }}
+        >
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Welcome back {user.firstName}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
       </Grid>
+
 
       <Typography variant="h4" gutterBottom>
         Regional Economic Data
