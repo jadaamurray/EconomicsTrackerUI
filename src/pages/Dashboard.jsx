@@ -27,7 +27,7 @@ const Dashboard = () => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock data - replace with real data from your API
       const mockData = [
         { month: 'Jan', gdp: 3.2, inflation: 2.1, unemployment: 3.8 },
@@ -59,7 +59,7 @@ const Dashboard = () => {
           longitude: 10.4515
         }
       ];
-      
+
       setEconomicData(mockData);
     } catch (error) {
       console.error('Failed to fetch data:', error);
@@ -86,14 +86,8 @@ const Dashboard = () => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
-        <Typography variant="h4">Economic Dashboard</Typography>
-        <Button variant="contained" color="error" onClick={handleLogout}>
-          Logout
-        </Button>
-      </Box>
 
+    <Box sx={{ mt: 4 }}>
       {/* User Profile Card */}
      
 
@@ -103,15 +97,29 @@ const Dashboard = () => {
 
 
       <Grid item xs={12} md={4}>
-        <Card>
-          <CardContent>
-            <Typography variant="h4" gutterBottom>
-              Regional Economic Data
-            </Typography>
-          </CardContent>
-        </Card>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center', // Horizontal centering
+            alignItems: 'center',    // Vertical centering
+            height: '100%',          // Takes full height of grid cell
+          }}
+        >
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Welcome back {user.firstName}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
       </Grid>
-      
+
+
+      <Typography variant="h4" gutterBottom>
+        Regional Economic Data
+      </Typography>
+
       <Card sx={{ mb: 3 }}>
         <CardContent>
           <EconomicMap regionalData={regionalData} />
@@ -119,7 +127,7 @@ const Dashboard = () => {
       </Card>
 
       <Grid container spacing={3}>
-        
+
 
         {/* Key Metrics Card */}
         <Grid item xs={12} md={8}>
