@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import LoginPage from './pages/Login.jsx'; 
 import Dashboard from './pages/Dashboard.jsx';
+import RegionsPage from './pages/Regions.jsx';
 import Header from './components/Header.jsx';
 
 // Pages where header should be hidden
@@ -34,6 +35,13 @@ function App() {
           <Dashboard /> : 
           <Navigate to="/login" state={{ from: location }} replace />
       } 
+    />
+    <Route path="/regions"
+    element={
+      localStorage.getItem('authToken') ?
+      <RegionsPage /> :
+      <Navigate to="/login" state={{ from: location }} replace />
+    }
     />
     <Route path="*" 
     element={isAuthenticated ? "/dashboard" : "/login"} replace

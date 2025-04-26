@@ -2,6 +2,7 @@ import { MapContainer, TileLayer, GeoJSON, Tooltip } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useState } from 'react';
 import L from 'leaflet';
+import geoJsonData from '../data/regions-geo.json';
 
 // Fix for default marker icons in React
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -46,16 +47,16 @@ const EconomicMap = ({ regionalData }) => {
 
   return (
     <div className="map-container" style={{ height: "500px", width: "100%" }}>
-      <MapContainer 
-        center={[20, 0]} 
-        zoom={2} 
+      <MapContainer
+        center={[20, 0]}
+        zoom={2}
         style={{ height: "100%", width: "100%" }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        
+
         <GeoJSON
           data={geoJsonData}
           onEachFeature={onEachFeature}
@@ -70,9 +71,9 @@ const EconomicMap = ({ regionalData }) => {
             });
           }}
         />
-        
+
         {hoveredRegion && (
-          <Tooltip 
+          <Tooltip
             position={[
               geoJsonData.features.find(f => f.properties.name === hoveredRegion)?.geometry.coordinates[1],
               geoJsonData.features.find(f => f.properties.name === hoveredRegion)?.geometry.coordinates[0]
