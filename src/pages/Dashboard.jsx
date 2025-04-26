@@ -89,12 +89,6 @@ const Dashboard = () => {
 
     <Box sx={{ mt: 4 }}>
       {/* User Profile Card */}
-     
-
-      <Typography variant="h6" gutterBottom>
-        Welcome back {user.firstName}
-      </Typography>
-
 
       <Grid item xs={12} md={4}>
         <Box
@@ -164,7 +158,7 @@ const Dashboard = () => {
               <Typography variant="h6" gutterBottom>
                 Recent Trends
               </Typography>
-              {/* Add your actual data components here */}
+              {/* Add actual data components here */}
             </CardContent>
           </Card>
         </Grid>
