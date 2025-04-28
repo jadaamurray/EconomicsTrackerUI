@@ -26,7 +26,7 @@
 //fetch data that may only work if authenticated like user data
 
 //fetch favourites based on decoded userId - if you are adding favourties
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthService, apiClient } from '../apiconfig';
@@ -45,9 +45,11 @@ export function AppProvider({ children }) {
     () => !!localStorage.getItem('authToken')
   );
   //const [economicData, setEconomicData] = useState([]);
-  const [indicatorData, setIndicatorData] = useSate([]);
+  const [indicatorData, setIndicators] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
+
 
   // Checking auth status on app load
   /*useEffect(() => {
@@ -88,7 +90,7 @@ export function AppProvider({ children }) {
   const login = async (formData) => {
     setLoading(true);
     try {
-      console.log('Making request to:', `${import.meta.env.VITE_API_BASE_URL}/Account/login`);
+      //console.log('Making request to:', `${import.meta.env.VITE_API_BASE_URL}/Account/login`);
       const response = await apiClient.post('/Account/login', formData);
       // DEBUG
       /*console.group('[DEBUG] Response Inspection');
@@ -147,21 +149,44 @@ export function AppProvider({ children }) {
     setUser(null);
     navigate('/login');
   };
-  
-    // Fetch economic data
-    const fetchIndicatorData = async () => {
-      setLoading(true);
-      try {
-        const { data } = await axios.get('/api/indicator', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        setIndicatorData(data);
-      } finally {
-        setLoading(false);
+
+  // Fetch indicator data
+  const fetchIndicatorData = useCallback(async () => {
+    setLoading(true);
+    setError(null); // Reset error state
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/indicator`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        },
+        timeout: 10000 // 10 second timeout
+      });
+      console.log('Full response:', response);
+      // Validate response structure
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error('Invalid data format from server');
       }
-    };
+      const indicatorData = {
+        id: response.data.indicatorId,
+        name: response.data.indicatorName,
+        unit: response.data.unit,
+        description: response.data.description,
+        category: response.data.category
+      };
+      console.log(`Logged indicator data: ${indicatorData}`);
+      setIndicators(indicatorData);
+      return indicatorData;
+    } catch (error) {
+      console.error('Indicator fetch failed', {
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
 
   return (
@@ -171,7 +196,9 @@ export function AppProvider({ children }) {
       isAuthenticated,
       login,
       logout,
-      fetchIndicatorData
+      fetchIndicatorData,
+      error,
+      indicatorData
     }}>
       {children}
     </AppContext.Provider>

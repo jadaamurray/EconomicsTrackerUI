@@ -47,7 +47,7 @@ function App() {
     <Route path="/indicators"
     element={
       localStorage.getItem('authToken') ?
-      <RegionsPage /> :
+      <IndicatorsPage /> :
       <Navigate to="/login" state={{ from: location }} replace />
     }
     />
