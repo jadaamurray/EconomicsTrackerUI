@@ -45,7 +45,7 @@ export function AppProvider({ children }) {
     () => !!localStorage.getItem('authToken')
   );
   //const [economicData, setEconomicData] = useState([]);
-  const [indicatorData, setIndicators] = useState([]);
+  const [indicatorData, setIndicators] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -166,16 +166,16 @@ export function AppProvider({ children }) {
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error('Invalid data format from server');
       }
-      const indicatorData = {
-        id: response.data.indicatorId,
-        name: response.data.indicatorName,
-        unit: response.data.unit,
-        description: response.data.description,
-        category: response.data.category
-      };
-      console.log(`Logged indicator data: ${indicatorData}`);
-      setIndicators(indicatorData);
-      return indicatorData;
+      const formattedIndicators = response.data.map(item => ({
+        id: item.indicatorId,
+        name: item.indicatorName,
+        unit: item.unit,
+        description: item.description,
+        category: item.category
+      }));      
+      console.log(`Logged indicator data: ${formattedIndicators}`);
+      setIndicators(formattedIndicators);
+      return formattedIndicators;
     } catch (error) {
       console.error('Indicator fetch failed', {
         error: error.message,

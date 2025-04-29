@@ -4,12 +4,11 @@ import { useApp } from '../context/AppContext';
 
 const IndicatorsPage = () => {
     const { indicators, loading, error, fetchIndicatorData } = useApp();
-    
     useEffect(() => {
         if (!indicators && !loading) {
-          fetchIndicatorData();
+            fetchIndicatorData();
         }
-      }, [indicators, loading, fetchIndicatorData]);
+    }, [indicators, loading, fetchIndicatorData]);
 
     if (loading) {
         return (
@@ -33,12 +32,12 @@ const IndicatorsPage = () => {
                 Indicators Data Test
             </Typography>
 
-            <List sx={{ maxWidth: 600 }}>
-                {indicators?.map((indicators, index) => (
-                    <ListItem key={index} divider>
+            <List>
+                {indicators?.map(indicator => (
+                    <ListItem key={indicator.id}>
                         <ListItemText
-                            primary={indicators.name}
-                            secondary={`Value: ${indicators.value} | Date: ${indicators.date}`}
+                            primary={indicator.name}
+                            secondary={`${indicator.unit} | ${indicator.category}`}
                         />
                     </ListItem>
                 ))}
