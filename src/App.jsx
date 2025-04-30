@@ -6,6 +6,7 @@ import theme from './theme';
 import LoginPage from './pages/Login.jsx'; 
 import Dashboard from './pages/Dashboard.jsx';
 import RegionsPage from './pages/Regions.jsx';
+import AdminPage from './pages/Admin.jsx';
 import Header from './components/Header.jsx';
 
 // Pages where header should be hidden
@@ -43,6 +44,14 @@ function App() {
       <Navigate to="/login" state={{ from: location }} replace />
     }
     />
+    <Route 
+  path="/admin" 
+  element={
+    localStorage.getItem('authToken') ? 
+      <AdminPage /> : 
+      <Navigate to="/login" state={{ from: location }} replace />
+  }
+/>
     <Route path="*" 
     element={isAuthenticated ? "/dashboard" : "/login"} replace
      />
