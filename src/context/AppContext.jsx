@@ -45,7 +45,12 @@ export function AppProvider({ children }) {
     () => !!localStorage.getItem('authToken')
   );
   //const [economicData, setEconomicData] = useState([]);
-  const [indicatorData, setIndicators] = useState(null);
+  const [indicatorData, setIndicators] = useState({
+    name: '',
+    unit: '',
+    category: '',
+    description: ''
+  });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -151,9 +156,10 @@ export function AppProvider({ children }) {
   };
 
   // Fetch indicator data
-  const fetchIndicatorData = useCallback(async () => {
+  const fetchIndicatorData = async () => {
     setLoading(true);
     setError(null); // Reset error state
+    //console.log("Fetching indicator data...")
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/indicator`, {
         headers: {
@@ -161,7 +167,6 @@ export function AppProvider({ children }) {
         },
         timeout: 10000 // 10 second timeout
       });
-      console.log('Full response:', response);
       // Validate response structure
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error('Invalid data format from server');
@@ -170,10 +175,10 @@ export function AppProvider({ children }) {
         id: item.indicatorId,
         name: item.indicatorName,
         unit: item.unit,
-        description: item.description,
+        description: item.description || '',
         category: item.category
-      }));      
-      console.log(`Logged indicator data: ${formattedIndicators}`);
+      }));
+      //console.log('Logged indicator data: ', formattedIndicators);
       setIndicators(formattedIndicators);
       return formattedIndicators;
     } catch (error) {
@@ -186,7 +191,7 @@ export function AppProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }; // empty dependency array is to ensure stable function identity
 
 
   return (

@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react';
-import { Box, CircularProgress, Typography, List } from '@mui/material';
+import { Box, CircularProgress, Typography, List, ListItem, ListItemText, Alert } from '@mui/material';
 import { useApp } from '../context/AppContext';
 
 const IndicatorsPage = () => {
-    const { indicators, loading, error, fetchIndicatorData } = useApp();
+    const { indicatorData, loading, error, fetchIndicatorData } = useApp();
+    const [initialised, setInitialised] = useState(false);
+
     useEffect(() => {
-        if (!indicators && !loading) {
+        // only fetch if there are no indicators and not already loading 
+        if (!loading && !initialised) {
+            setInitialised(true);
             fetchIndicatorData();
         }
-    }, [indicators, loading, fetchIndicatorData]);
+    }, [indicatorData, loading]);
+
+    console.log('Indicator data: ', indicatorData);
 
     if (loading) {
         return (
@@ -32,16 +38,20 @@ const IndicatorsPage = () => {
                 Indicators Data Test
             </Typography>
 
-            <List>
-                {indicators?.map(indicator => (
-                    <ListItem key={indicator.id}>
-                        <ListItemText
-                            primary={indicator.name}
-                            secondary={`${indicator.unit} | ${indicator.category}`}
-                        />
-                    </ListItem>
-                ))}
-            </List>
+            {Array.isArray(indicatorData) ? (
+                <List sx={{ maxWidth: 600 }}>
+                    {indicatorData?.map(indicatorData => (
+                        <ListItem key={indicatorData.id} divider>
+                            <ListItemText
+                                primary={indicatorData.name}
+                                secondary={`${indicatorData.unit} | ${indicatorData.category}`}
+                            />
+                        </ListItem>
+                    ))}
+                </List>
+            ) : (
+                <Typography>No indicator data available</Typography>
+            )}
         </Box>
     );
 };

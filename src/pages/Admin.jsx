@@ -83,6 +83,15 @@ const AdminPage = () => {
           size="small"
         />
         <TextField
+          label="Description"
+          value={newIndicator.description || ''}
+          onChange={(e) => setNewIndicator({...newIndicator, description: e.target.value})}
+          fullWidth
+          margin="normal"
+          size="small"
+        />
+        
+        <TextField
           label="Category"
           value={newIndicator.category}
           onChange={(e) => setNewIndicator({...newIndicator, category: e.target.value})}

@@ -3,7 +3,7 @@ import { useApp } from './context/AppContext.jsx';
 import './App.css';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
-import LoginPage from './pages/Login.jsx'; 
+import LoginPage from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import RegionsPage from './pages/Regions.jsx';
 import IndicatorsPage from './pages/Indicators.jsx';
@@ -17,56 +17,56 @@ function App() {
   const { user, loading, isAuthenticated } = useApp();
   const location = useLocation();
 
-   // Check if header should be visible
-   const showHeader = !NO_HEADER_PATHS.includes(location.pathname);
+  // Check if header should be visible
+  const showHeader = !NO_HEADER_PATHS.includes(location.pathname);
 
-   if (loading) {
+  if (loading) {
     return <div className="loading-spinner">Loading...</div>;
   }
   return (
     <ThemeProvider theme={theme}>
-    <>
-    {showHeader && <Header />}
-    <main>
-    < Routes >
-    <Route path="/login" element={<LoginPage />} />
-    <Route 
-      path="/dashboard" 
-      element={
-        localStorage.getItem('authToken') ? 
-          <Dashboard /> : 
-          <Navigate to="/login" state={{ from: location }} replace />
-      } 
-    />
-    <Route path="/regions"
-    element={
-      localStorage.getItem('authToken') ?
-      <RegionsPage /> :
-      <Navigate to="/login" state={{ from: location }} replace />
-    }
-    />
-    <Route 
-  path="/admin" 
-  element={
-    localStorage.getItem('authToken') ? 
-      <AdminPage /> : 
-      <Navigate to="/login" state={{ from: location }} replace />
-  }
-    />
-    <Route path="/indicators"
-    element={
-      localStorage.getItem('authToken') ?
-      <IndicatorsPage /> :
-      <Navigate to="/login" state={{ from: location }} replace />
-    }
-/>
-    <Route path="*" 
-    element={isAuthenticated ? "/dashboard" : "/login"} replace
-     />
-  </Routes >
-  </main>
-  </>
-  </ThemeProvider>
+      <>
+        {showHeader && <Header />}
+        <main>
+          < Routes >
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                localStorage.getItem('authToken') ?
+                  <Dashboard /> :
+                  <Navigate to="/login" state={{ from: location }} replace />
+              }
+            />
+            <Route path="/regions"
+              element={
+                localStorage.getItem('authToken') ?
+                  <RegionsPage /> :
+                  <Navigate to="/login" state={{ from: location }} replace />
+              }
+            />
+            <Route path="/indicators"
+              element={
+                localStorage.getItem('authToken') ?
+                  <IndicatorsPage /> :
+                  <Navigate to="/login" state={{ from: location }} replace />
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                localStorage.getItem('authToken') ?
+                  <AdminPage /> :
+                  <Navigate to="/login" state={{ from: location }} replace />
+              }
+            />
+            <Route path="*"
+              element={isAuthenticated ? "/dashboard" : "/login"} replace
+            />
+          </Routes >
+        </main>
+      </>
+    </ThemeProvider>
 
   );
 }
