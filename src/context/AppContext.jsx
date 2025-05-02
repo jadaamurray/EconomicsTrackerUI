@@ -26,7 +26,7 @@
 //fetch data that may only work if authenticated like user data
 
 //fetch favourites based on decoded userId - if you are adding favourties
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthService, apiClient } from '../apiconfig';
@@ -45,8 +45,13 @@ export function AppProvider({ children }) {
     () => !!localStorage.getItem('authToken')
   );
   //const [economicData, setEconomicData] = useState([]);
+  const [indicatorData, setIndicators] = useState([]);
+  const [regionalData, setRegions] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
+
 
   // Checking auth status on app load
   /*useEffect(() => {
@@ -87,7 +92,7 @@ export function AppProvider({ children }) {
   const login = async (formData) => {
     setLoading(true);
     try {
-      console.log('Making request to:', `${import.meta.env.VITE_API_BASE_URL}/Account/login`);
+      //console.log('Making request to:', `${import.meta.env.VITE_API_BASE_URL}/Account/login`);
       const response = await apiClient.post('/Account/login', formData);
       // DEBUG
       /*console.group('[DEBUG] Response Inspection');
@@ -117,14 +122,14 @@ export function AppProvider({ children }) {
       setUser(userData);
       setIsAuthenticated(true);
       // DEBUG
-      console.group('User information');
+      /*console.group('User information');
       console.log('token: ', userData.token);
       console.log('id: ', userData.id);
       console.log('email: ', userData.email);
       console.log('roles: ', userData.roles);
       console.log('firstName: ', userData.firstName);
       console.log('lastName: ', userData.lastName);
-      console.groupEnd();
+      console.groupEnd();*/
       //
       return userData;
     } catch (error) {
@@ -143,26 +148,71 @@ export function AppProvider({ children }) {
     setUser(null);
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
-    setUser(null);
     navigate('/login');
   };
-  /*
-    // Fetch economic data
-    const fetchEconomicData = async () => {
-      setLoading(true);
-      try {
-        const { data } = await axios.get('/api/economic-data', {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-        setEconomicData(data);
-      } finally {
-        setLoading(false);
-      }
-    };
-    */
 
+  // Fetch indicator data
+  const fetchIndicatorData = async () => {
+    setLoading(true);
+    setError(null); // Reset error state
+    //console.log("Fetching indicator data...")
+    try {
+      const response = await apiClient.get('/indicator')
+      // Validate response structure
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error('Invalid data format from server');
+      }
+      const formattedIndicators = response.data.map(item => ({
+        id: item.indicatorId,
+        name: item.indicatorName,
+        unit: item.unit,
+        description: item.description || '',
+        category: item.category
+      }));
+      //console.log('Logged indicator data: ', formattedIndicators);
+      setIndicators(formattedIndicators);
+      return formattedIndicators;
+    } catch (error) {
+      console.error('Indicator fetch failed', {
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch Regional Data
+  const fetchRegionalData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiClient.get('/region')
+
+      // Validate response structure
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error('Invalid data format from server');
+      }
+      const formattedRegions = response.data.map(region => ({
+        id: region.regionId,
+        name: region.regionName,
+        description: region.description || ''
+      }));
+      setRegions(formattedRegions);
+      return formattedRegions;
+    } catch (error) {
+      console.error('Regional data fetch failed:', {
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AppContext.Provider value={{
@@ -171,6 +221,11 @@ export function AppProvider({ children }) {
       isAuthenticated,
       login,
       logout,
+      fetchIndicatorData,
+      error,
+      indicatorData,
+      fetchRegionalData,
+      regionalData
     }}>
       {children}
     </AppContext.Provider>

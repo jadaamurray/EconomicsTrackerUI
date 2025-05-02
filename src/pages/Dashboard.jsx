@@ -16,19 +16,19 @@ import EconomicMap from '../components/EconomicMap';
 
 
 const Dashboard = () => {
-  const { user, logout } = useApp();
+  const { user, logout, fetchEconomicData } = useApp();
   const navigate = useNavigate();
   const [economicData, setEconomicData] = useState(null);
   const [regionalData, setRegionalData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Sample economic data - replace with your actual API call
-  const fetchEconomicData = async () => {
+  // Sample economic data
+  const loadEconomicData = async () => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Mock data - replace with real data from your API
+      // Mock data
       const mockData = [
         { month: 'Jan', gdp: 3.2, inflation: 2.1, unemployment: 3.8 },
         { month: 'Feb', gdp: 3.5, inflation: 2.3, unemployment: 3.7 },
@@ -36,7 +36,7 @@ const Dashboard = () => {
         { month: 'Apr', gdp: 3.9, inflation: 2.7, unemployment: 3.5 },
         { month: 'May', gdp: 4.1, inflation: 2.9, unemployment: 3.4 },
       ];
-      const regionalData = [
+      const mockRegionalData = [
         {
           region: "United States",
           gdp: 2.3,
@@ -61,6 +61,7 @@ const Dashboard = () => {
       ];
 
       setEconomicData(mockData);
+      setRegionalData(mockRegionalData);
     } catch (error) {
       console.error('Failed to fetch data:', error);
     } finally {
@@ -72,7 +73,7 @@ const Dashboard = () => {
     if (!user) {
       navigate('/login');
     } else {
-      fetchEconomicData();
+      loadEconomicData();
     }
   }, [user, navigate]);
 
@@ -90,7 +91,7 @@ const Dashboard = () => {
     <Box sx={{ mt: 4 }}>
       {/* User Profile Card */}
 
-      <Grid item xs={12} md={4}>
+      <Grid>
         <Box
           sx={{
             display: 'flex',
@@ -124,7 +125,7 @@ const Dashboard = () => {
 
 
         {/* Key Metrics Card */}
-        <Grid item xs={12} md={8}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -152,7 +153,7 @@ const Dashboard = () => {
         </Grid>
 
         {/* Additional Data Cards */}
-        <Grid item xs={12} md={6}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
@@ -163,7 +164,7 @@ const Dashboard = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid>
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
