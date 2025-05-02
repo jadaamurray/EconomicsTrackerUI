@@ -4,17 +4,13 @@ import { useApp } from '../context/AppContext';
 
 const IndicatorsPage = () => {
     const { indicatorData, loading, error, fetchIndicatorData } = useApp();
-    const [initialised, setInitialised] = useState(false);
+    //const [initialised, setInitialised] = useState(false);
 
     useEffect(() => {
-        // only fetch if there are no indicators and not already loading 
-        if (!loading && !initialised) {
-            setInitialised(true);
+        if (!loading && indicatorData.length === 0) {
             fetchIndicatorData();
         }
-    }, [indicatorData, loading]);
-
-    console.log('Indicator data: ', indicatorData);
+    }, [loading, indicatorData, fetchIndicatorData]);    
 
     if (loading) {
         return (

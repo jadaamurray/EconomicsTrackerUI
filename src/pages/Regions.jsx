@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -7,7 +7,10 @@ import {
   Grid,
   Tabs,
   Tab,
-  useTheme
+  useTheme, 
+  List,
+  ListItem,
+  ListItemText
 } from '@mui/material';
 import {
   MapContainer,
@@ -16,14 +19,18 @@ import {
   Tooltip
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import regionsData from '../data/regions-geo.json'; // Your GeoJSON data
+import regionsData from '../data/regions-geo.json'; // GeoJSON data
 import EconomicMap from '../components/EconomicMap';
+import { useApp } from '../context/AppContext';
 
 
 const RegionsPage = () => {
   const theme = useTheme();
-  const [activeTab, setActiveTab] = React.useState(0);
-  const [selectedRegion, setSelectedRegion] = React.useState(null);
+  const [activeTab, setActiveTab] = useState(0);
+  const [selectedRegion, setSelectedRegion] = useState(null);
+  const {regionalData, fetchRegionalData, loading, indicatorData} = useApp();
+  const [initialised, setInitialised] = useState(false);
+  
 
   // Sample economic data by region
   const economicData = {
@@ -32,6 +39,13 @@ const RegionsPage = () => {
     "East": { gdp: 290, growth: 3.1, unemployment: 4.7 },
     "West": { gdp: 520, growth: 2.7, unemployment: 5.9 }
   };
+
+  useEffect(() => {
+    if (!loading && regionalData.length === 0) {
+        fetchRegionalData();
+    }
+}, [loading, regionalData, fetchRegionalData]);
+
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
@@ -67,9 +81,30 @@ const RegionsPage = () => {
         Regional Economic Data
       </Typography>
 
+      <Box sx={{ p: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Regions Data Test
+        </Typography>
+
+        {Array.isArray(regionalData) ? (
+          <List sx={{ maxWidth: 600 }}>
+            {regionalData?.map(region => (
+              <ListItem key={region.id} divider>
+                <ListItemText
+                  primary={region.name}
+                  secondary={`${indicatorData.description}`}
+                />
+              </ListItem>
+            ))}
+          </List>
+        ) : (
+          <Typography>No indicator data available</Typography>
+        )}
+      </Box>
+
       <Grid container spacing={3}>
         {/* Map Column */}
-        <Grid item xs={12} md={8}>
+        <Grid>
           <Card sx={{ height: '100%' }}>
             <CardContent sx={{ height: '500px', p: 0 }}>
               <EconomicMap
@@ -87,7 +122,7 @@ const RegionsPage = () => {
         </Grid>
 
         {/* Data Column */}
-        <Grid item xs={12} md={4}>
+        <Grid>
           <Card sx={{
             height: '100%',
             bgcolor: theme.palette.background.paper

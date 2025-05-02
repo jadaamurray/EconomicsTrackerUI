@@ -45,12 +45,9 @@ export function AppProvider({ children }) {
     () => !!localStorage.getItem('authToken')
   );
   //const [economicData, setEconomicData] = useState([]);
-  const [indicatorData, setIndicators] = useState({
-    name: '',
-    unit: '',
-    category: '',
-    description: ''
-  });
+  const [indicatorData, setIndicators] = useState([]);
+  const [regionalData, setRegions] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -151,7 +148,6 @@ export function AppProvider({ children }) {
     setUser(null);
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
-    setUser(null);
     navigate('/login');
   };
 
@@ -161,12 +157,7 @@ export function AppProvider({ children }) {
     setError(null); // Reset error state
     //console.log("Fetching indicator data...")
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/indicator`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`
-        },
-        timeout: 10000 // 10 second timeout
-      });
+      const response = await apiClient.get('/indicator')
       // Validate response structure
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error('Invalid data format from server');
@@ -191,8 +182,37 @@ export function AppProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  }; // empty dependency array is to ensure stable function identity
+  };
 
+  // Fetch Regional Data
+  const fetchRegionalData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiClient.get('/region')
+
+      // Validate response structure
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error('Invalid data format from server');
+      }
+      const formattedRegions = response.data.map(region => ({
+        id: region.regionId,
+        name: region.regionName,
+        description: region.description || ''
+      }));
+      setRegions(formattedRegions);
+      return formattedRegions;
+    } catch (error) {
+      console.error('Regional data fetch failed:', {
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AppContext.Provider value={{
@@ -203,7 +223,9 @@ export function AppProvider({ children }) {
       logout,
       fetchIndicatorData,
       error,
-      indicatorData
+      indicatorData,
+      fetchRegionalData,
+      regionalData
     }}>
       {children}
     </AppContext.Provider>

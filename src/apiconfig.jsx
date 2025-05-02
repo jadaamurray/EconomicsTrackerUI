@@ -24,18 +24,7 @@ apiClient.interceptors.request.use(config => {
 apiClient.interceptors.response.use(
   (response) => { 
     console.log('Received response from:', response.config.url);
-    console.log('Login API Response:', response); 
-    return {
-      ...response,  // Keep status/headers/etc
-      data: {
-        token: response.data.token,
-        userId: response.data.userId,
-        email: response.data.email,
-        roles: response.data.roles,
-        firstName: response.data.firstName,
-        lastName: response.data.lastName
-      }
-    }
+   return response;
   },
   (error) => { // Error handling
     if (error.response?.status === 401) {
