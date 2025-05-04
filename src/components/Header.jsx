@@ -14,7 +14,8 @@ import {
   List,
   ListItem,
   ListItemText,
-  Divider
+  Divider,
+  ListItemButton
 } from '@mui/material';
 import { Menu as MenuIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
@@ -186,14 +187,13 @@ const Header = () => {
         >
           <List>
             {mobileNavItems.map((item) => (
-              <ListItem
-                button
+              <ListItemButton
                 key={item.name}
                 component={Link}
                 to={item.path}
               >
                 <ListItemText primary={item.name} />
-              </ListItem>
+              </ListItemButton>
             ))}
           </List>
           <Divider />

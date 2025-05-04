@@ -9,6 +9,7 @@ import RegionsPage from './pages/Regions.jsx';
 import IndicatorsPage from './pages/Indicators.jsx';
 import AdminPage from './pages/Admin.jsx';
 import Header from './components/Header.jsx';
+import ProfilePage from './pages/Profile.jsx';
 
 // Pages where header should be hidden
 const NO_HEADER_PATHS = ['/login', '/register'];
@@ -60,6 +61,7 @@ function App() {
                   <Navigate to="/login" state={{ from: location }} replace />
               }
             />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="*"
               element={isAuthenticated ? "/dashboard" : "/login"} replace
             />
