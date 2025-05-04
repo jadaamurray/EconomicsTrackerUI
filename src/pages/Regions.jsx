@@ -92,7 +92,8 @@ const RegionsPage = () => {
               <ListItem key={region.id} divider>
                 <ListItemText
                   primary={region.name}
-                  secondary={`${indicatorData.description}`}
+                  secondary={`${region.category}`}
+                  //tertiary={`${region.description}`}
                 />
               </ListItem>
             ))}

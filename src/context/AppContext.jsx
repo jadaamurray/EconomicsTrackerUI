@@ -28,7 +28,6 @@
 //fetch favourites based on decoded userId - if you are adding favourties
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { AuthService, apiClient } from '../apiconfig';
 //import jwtDecode from 'jwt-decode';
 
@@ -198,7 +197,8 @@ export function AppProvider({ children }) {
       const formattedRegions = response.data.map(region => ({
         id: region.regionId,
         name: region.regionName,
-        description: region.description || ''
+        description: region.description || '',
+        category: region.category
       }));
       setRegions(formattedRegions);
       return formattedRegions;

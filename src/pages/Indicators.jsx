@@ -4,7 +4,6 @@ import { useApp } from '../context/AppContext';
 
 const IndicatorsPage = () => {
     const { indicatorData, loading, error, fetchIndicatorData } = useApp();
-    //const [initialised, setInitialised] = useState(false);
 
     useEffect(() => {
         if (!loading && indicatorData.length === 0) {
