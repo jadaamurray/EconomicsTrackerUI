@@ -50,6 +50,15 @@ const ProfilePage = () => {
     }
   };
 
+  //  to format roles
+const formatUserRole = (roles) => {
+    if (!roles || roles.length === 0) return 'General Customer';
+    if (roles.includes('Admin')) return 'Administrator';
+    if (roles.includes('Editor')) return 'Editor';
+    return roles.join(', '); // Fallback for other roles
+  };
+  
+
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Paper elevation={3} sx={{ p: mobile ? 2 : 4 }}>
@@ -150,7 +159,7 @@ const ProfilePage = () => {
                   <strong>Email:</strong> {user?.email}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                  <strong>User Type:</strong> {user?.roles}
+                  <strong>User Type:</strong> {formatUserRole(user?.roles)}
                 </Typography>
                 <Divider sx={{ my: 3 }} />
                 <Typography variant="h6" gutterBottom>
