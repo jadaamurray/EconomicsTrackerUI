@@ -30,7 +30,7 @@ const IndicatorsPage = () => {
     return (
         <Box sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-                Indicators Data Test
+                Indicators
             </Typography>
 
             {Array.isArray(indicatorData) ? (

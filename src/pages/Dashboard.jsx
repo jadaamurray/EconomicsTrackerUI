@@ -9,174 +9,338 @@ import {
   Grid,
   CircularProgress,
   Button,
-  Divider
+  Divider,
+  Chip,
+  Avatar,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar
 } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import EconomicMap from '../components/EconomicMap';
-
+import PublicIcon from '@mui/icons-material/Public';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import EqualizerIcon from '@mui/icons-material/Equalizer';
 
 const Dashboard = () => {
-  const { user, logout, fetchEconomicData } = useApp();
+  const { 
+    user, 
+    fetchEconomicData, 
+    economicData, 
+    fetchRegionalData, 
+    regionalData,
+    fetchIndicatorData,
+    indicatorData,
+    fetchSourceData,
+    sourceData,
+    loading
+  } = useApp();
+  
+  //const [loading, setLoading] = useState(true);
+  const [selectedRegion, setSelectedRegion] = useState(null);
   const navigate = useNavigate();
-  const [economicData, setEconomicData] = useState(null);
-  const [regionalData, setRegionalData] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  // Sample economic data
-  const loadEconomicData = async () => {
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Mock data
-      const mockData = [
-        { month: 'Jan', gdp: 3.2, inflation: 2.1, unemployment: 3.8 },
-        { month: 'Feb', gdp: 3.5, inflation: 2.3, unemployment: 3.7 },
-        { month: 'Mar', gdp: 3.7, inflation: 2.5, unemployment: 3.6 },
-        { month: 'Apr', gdp: 3.9, inflation: 2.7, unemployment: 3.5 },
-        { month: 'May', gdp: 4.1, inflation: 2.9, unemployment: 3.4 },
-      ];
-      const mockRegionalData = [
-        {
-          region: "United States",
-          gdp: 2.3,
-          inflation: 3.2,
-          latitude: 37.0902,
-          longitude: -95.7129
-        },
-        {
-          region: "United Kingdom",
-          gdp: 1.8,
-          inflation: 2.9,
-          latitude: 55.3781,
-          longitude: -3.4360
-        },
-        {
-          region: "Germany",
-          gdp: 1.5,
-          inflation: 2.7,
-          latitude: 51.1657,
-          longitude: 10.4515
-        }
-      ];
-
-      setEconomicData(mockData);
-      setRegionalData(mockRegionalData);
-    } catch (error) {
-      console.error('Failed to fetch data:', error);
-    } finally {
-      setLoading(false);
+  /*useEffect(() => {
+    if (!loading) {
+          fetchEconomicData(),
+          fetchRegionalData(),
+          fetchIndicatorData(),
+          fetchSourceData()
     }
-  };
+
+  }, [fetchEconomicData, fetchRegionalData, fetchIndicatorData, fetchSourceData, economicData, regionalData, indicatorData, sourceData]);*/
+  useEffect(() => {
+    if (!loading && indicatorData.length === 0) {
+        fetchIndicatorData();
+    }
+}, [loading, indicatorData, fetchIndicatorData]);   
 
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    } else {
-      loadEconomicData();
+    if (!loading && regionalData.length === 0) {
+      fetchRegionalData();
     }
-  }, [user, navigate]);
+  }, [loading, regionalData, fetchRegionalData]);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  useEffect(() => {
+    if (!loading && economicData.length === 0) {
+        fetchEconomicData();
+    }
+}, [loading, economicData, fetchEconomicData]); 
+
+useEffect(() => {
+  if (!loading && sourceData.length === 0) {
+      fetchSourceData();
+  }
+}, [loading, sourceData, fetchSourceData]);   
+
+  // Get summary data for a representative region (using first region if none selected)
+  const getEconomicSummary = () => {
+    const regionId = selectedRegion || (regionalData.length > 0 ? regionalData[0].id : null);
+    if (!regionId || !economicData.length) return null;
+    
+    return economicData.find(item => item.regionId === regionId) || {
+      gdp: 'N/A',
+      unemployment: 'N/A',
+      growth: 'N/A'
+    };
   };
 
+  const summaryData = getEconomicSummary();
+  const topRegions = [...regionalData].sort((a, b) => b.economicScore - a.economicScore).slice(0, 3);
+  const keyIndicators = indicatorData.filter(ind => [1, 2].includes(ind.id)); // GDP and Unemployment
+
   if (!user) {
-    return <CircularProgress />;
+    return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+      <CircularProgress />
+    </Box>;
   }
 
   return (
-
-    <Box sx={{ mt: 4 }}>
-      {/* User Profile Card */}
-
-      <Grid>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center', // Horizontal centering
-            alignItems: 'center',    // Vertical centering
-            height: '100%',          // Takes full height of grid cell
-          }}
-        >
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Welcome back {user.firstName}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Box>
-      </Grid>
-
-
-      <Typography variant="h4" gutterBottom>
-        Regional Economic Data
-      </Typography>
-
+    <Box sx={{ p: 3 }}>
+      {/* Welcome Card */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
-          <EconomicMap regionalData={regionalData} />
+          <Typography variant="h5" gutterBottom>
+            Welcome back, {user.firstName}
+          </Typography>
+          <Typography color="text.secondary">
+            Last updated: {new Date().toLocaleDateString()}
+          </Typography>
         </CardContent>
       </Card>
 
-      <Grid container spacing={3}>
-
-
-        {/* Key Metrics Card */}
+      {/* 4-Section Dashboard Grid */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* Regions Card */}
         <Grid>
-          <Card>
+          <Card sx={{ height: '100%' }}>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Key Economic Indicators
-              </Typography>
-              <Divider sx={{ my: 2 }} />
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <PublicIcon color="primary" sx={{ mr: 1 }} />
+                <Typography variant="h6">Regions</Typography>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
               {loading ? (
                 <CircularProgress />
               ) : (
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={economicData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="gdp" stroke="#8884d8" name="GDP Growth (%)" />
-                    <Line type="monotone" dataKey="inflation" stroke="#82ca9d" name="Inflation (%)" />
-                    <Line type="monotone" dataKey="unemployment" stroke="#ffc658" name="Unemployment (%)" />
-                  </LineChart>
-                </ResponsiveContainer>
+                <List>
+                  {topRegions.map(region => (
+                    <ListItem 
+                      key={region.id} 
+                      button
+                      onClick={() => setSelectedRegion(region.id)}
+                      selected={selectedRegion === region.id}
+                    >
+                      <ListItemAvatar>
+                        <Avatar sx={{ bgcolor: 'primary.main' }}>
+                          {region.name.charAt(0)}
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={region.name}
+                        //secondary={`${region.countries.length} countries`}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+              <Button 
+                fullWidth 
+                variant="outlined" 
+                sx={{ mt: 2 }}
+                onClick={() => navigate('/regions')}
+              >
+                View All Regions
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Indicators Card */}
+        <Grid>
+          <Card sx={{ height: '100%' }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <AssessmentIcon color="secondary" sx={{ mr: 1 }} />
+                <Typography variant="h6">Key Indicators</Typography>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
+              {loading ? (
+                <CircularProgress />
+              ) : (
+                <List>
+                  {keyIndicators.map(indicator => (
+                    <ListItem key={indicator.id}>
+                      <ListItemText
+                        primary={indicator.name}
+                        secondary={`Unit: ${indicator.unit}`}
+                      />
+                      <Chip 
+                        label={indicator.category} 
+                        size="small" 
+                        color="primary"
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+              <Button 
+                fullWidth 
+                variant="outlined" 
+                sx={{ mt: 2 }}
+                onClick={() => navigate('/indicators')}
+              >
+                View All Indicators
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Sources Card */}
+        <Grid>
+          <Card sx={{ height: '100%' }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <LibraryBooksIcon color="info" sx={{ mr: 1 }} />
+                <Typography variant="h6">Data Sources</Typography>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
+              {loading ? (
+                <CircularProgress />
+              ) : (
+                <List>
+                  {sourceData.slice(0, 3).map(source => (
+                    <ListItem key={source.id}>
+                      <ListItemText
+                        primary={source.name}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+              <Button 
+                fullWidth 
+                variant="outlined" 
+                sx={{ mt: 2 }}
+                onClick={() => navigate('/sources')}
+              >
+                View All Sources
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Economic Data Card */}
+        <Grid>
+          <Card sx={{ height: '100%' }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <EqualizerIcon color="success" sx={{ mr: 1 }} />
+                <Typography variant="h6">Economic Snapshot</Typography>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
+              {loading ? (
+                <CircularProgress />
+              ) : summaryData ? (
+                <Box>
+                  <Typography variant="subtitle2" gutterBottom>
+                    {regionalData.find(r => r.id === (selectedRegion || regionalData[0]?.id))?.name || 'No region selected'}
+                  </Typography>
+                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
+                    <StatCard title="GDP Growth" value={`${summaryData.gdp || 'N/A'}%`} />
+                    <StatCard title="Unemployment" value={`${summaryData.unemployment || 'N/A'}%`} />
+                    <StatCard title="Inflation" value={`${summaryData.inflation || 'N/A'}%`} />
+                    <StatCard title="GDP Per Capita" value={`$${summaryData.gdpPerCapita || 'N/A'}`} />
+                  </Box>
+                  <Button 
+                    fullWidth 
+                    variant="contained" 
+                    sx={{ mt: 2 }}
+                    onClick={() => navigate('/economic-data')}
+                  >
+                    Detailed Analysis
+                  </Button>
+                </Box>
+              ) : (
+                <Typography>No economic data available</Typography>
               )}
             </CardContent>
           </Card>
         </Grid>
-
-        {/* Additional Data Cards */}
-        <Grid>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Recent Trends
-              </Typography>
-              {/* Add actual data components here */}
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Economic Calendar
-              </Typography>
-              {/* Add calendar component here */}
-            </CardContent>
-          </Card>
-        </Grid>
       </Grid>
+
+      {/* Map Section */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Regional Overview Map
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          <Box sx={{ height: '500px' }}>
+            <EconomicMap 
+              regionalData={regionalData} 
+              onRegionSelect={setSelectedRegion}
+              selectedRegion={selectedRegion}
+            />
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Economic Trends Chart */}
+      <Card>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Economic Trends
+          </Typography>
+          <Divider sx={{ mb: 2 }} />
+          {loading ? (
+            <CircularProgress />
+          ) : economicData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={economicData.filter(d => d.regionId === selectedRegion)}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="year" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="gdp" 
+                  stroke="#8884d8" 
+                  name="GDP Growth (%)" 
+                  activeDot={{ r: 8 }} 
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="unemployment" 
+                  stroke="#ff7043" 
+                  name="Unemployment (%)" 
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <Typography>No economic trend data available</Typography>
+          )}
+        </CardContent>
+      </Card>
     </Box>
   );
 };
+
+// Reusable Stat Card Component
+const StatCard = ({ title, value }) => (
+  <Box sx={{ 
+    p: 1.5, 
+    border: '1px solid', 
+    borderColor: 'divider', 
+    borderRadius: 1,
+    textAlign: 'center'
+  }}>
+    <Typography variant="subtitle2" color="text.secondary">{title}</Typography>
+    <Typography variant="h6">{value}</Typography>
+  </Box>
+);
 
 export default Dashboard;

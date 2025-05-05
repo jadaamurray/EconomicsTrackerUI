@@ -43,9 +43,10 @@ export function AppProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => !!localStorage.getItem('authToken')
   );
-  //const [economicData, setEconomicData] = useState([]);
+  const [economicData, setEconomicData] = useState([]);
   const [indicatorData, setIndicators] = useState([]);
   const [regionalData, setRegions] = useState([]);
+  const [sourceData, setSources] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -214,6 +215,70 @@ export function AppProvider({ children }) {
     }
   };
 
+  // Fetch Economic Data
+  const fetchEconomicData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiClient.get('/data')
+
+      // Validate response structure
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error('Invalid data format from server');
+      }
+      const formattedData = response.data.map(dataPoint => ({
+        id: dataPoint.DataId,
+        value: dataPoint.value,
+        dateTime: dataPoint.dateTime,
+        indicatorId: dataPoint.indicatorId,
+        regionId: dataPoint.regionId,
+        sourceId: dataPoint.sourceId
+      }));
+      setEconomicData(formattedData);
+      return formattedData;
+    } catch (error) {
+      console.error('Economic data fetch failed:', {
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch Source Data
+  const fetchSourceData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await apiClient.get('/source')
+
+      // Validate response structure
+      if (!response.data || !Array.isArray(response.data)) {
+        throw new Error('Invalid data format from server');
+      }
+      const formattedSources = response.data.map(source => ({
+        id: source.sourceId,
+        name: source.name,
+        description: source.description || '',
+        url: source.url
+      }));
+      setSources(formattedSources);
+      return formattedSources;
+    } catch (error) {
+      console.error('Sources data fetch failed:', {
+        error: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AppContext.Provider value={{
       user,
@@ -225,7 +290,11 @@ export function AppProvider({ children }) {
       error,
       indicatorData,
       fetchRegionalData,
-      regionalData
+      regionalData,
+      fetchEconomicData,
+      economicData,
+      fetchSourceData,
+      sourceData
     }}>
       {children}
     </AppContext.Provider>
