@@ -159,11 +159,6 @@ const Header = () => {
                 <MenuItem component={Link} to="/settings" onClick={handleMenuClose}>
                   Settings
                 </MenuItem>
-                {isAdmin && (
-                  <MenuItem component={Link} to="/audit-logs" onClick={handleMenuClose}>
-                    Admin Tools
-                  </MenuItem>
-                )}
                 <MenuItem onClick={() => { handleMenuClose(); logout(); }}>
                   Logout
                 </MenuItem>

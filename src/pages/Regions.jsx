@@ -39,7 +39,7 @@ useEffect(() => {
   if (!loading && regionalData.length === 0) {
     fetchRegionalData();
   }
-}, [loading, regionalData, fetchRegionalData]);
+}, [loading, regionalData]);
 
 
 const handleTabChange = (event, newValue) => {

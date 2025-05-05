@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import {
@@ -15,7 +15,8 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemAvatar
+  ListItemAvatar,
+  ListItemButton
 } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import EconomicMap from '../components/EconomicMap';
@@ -41,6 +42,8 @@ const Dashboard = () => {
   //const [loading, setLoading] = useState(true);
   const [selectedRegion, setSelectedRegion] = useState(null);
   const navigate = useNavigate();
+  const hasFetched = useRef(false);
+
 
   /*useEffect(() => {
     if (!loading) {
@@ -52,38 +55,50 @@ const Dashboard = () => {
 
   }, [fetchEconomicData, fetchRegionalData, fetchIndicatorData, fetchSourceData, economicData, regionalData, indicatorData, sourceData]);*/
   useEffect(() => {
-    if (!loading && indicatorData.length === 0) {
+   // console.log('[EFFECT] Checking if indicators need to be fetched');
+    if (indicatorData.length === 0) {
+      //console.log('[EFFECT] Fetching indicators...');
         fetchIndicatorData();
     }
-}, [loading, indicatorData, fetchIndicatorData]);   
+}, []);   
 
   useEffect(() => {
-    if (!loading && regionalData.length === 0) {
+    //console.log('[EFFECT] Checking if regions need to be fetched');
+    if (regionalData.length === 0) {
+     // console.log('[EFFECT] Fetching regions...');
       fetchRegionalData();
     }
-  }, [loading, regionalData, fetchRegionalData]);
+  }, []);
 
   useEffect(() => {
-    if (!loading && economicData.length === 0) {
+    //console.log('[EFFECT] Checking if data need to be fetched');
+    if (economicData.length === 0) {
+      //console.log('[EFFECT] Fetching data...');
         fetchEconomicData();
     }
-}, [loading, economicData, fetchEconomicData]); 
+}, []); 
 
 useEffect(() => {
-  if (!loading && sourceData.length === 0) {
+  //console.log('[EFFECT] Checking if sources need to be fetched');
+  if (sourceData.length === 0) {
+    //console.log('[EFFECT] Fetching sources...');
       fetchSourceData();
   }
-}, [loading, sourceData, fetchSourceData]);   
+}, []);   
 
   // Get summary data for a representative region (using first region if none selected)
   const getEconomicSummary = () => {
     const regionId = selectedRegion || (regionalData.length > 0 ? regionalData[0].id : null);
     if (!regionId || !economicData.length) return null;
     
-    return economicData.find(item => item.regionId === regionId) || {
-      gdp: 'N/A',
-      unemployment: 'N/A',
-      growth: 'N/A'
+    // Find all economic data entries for this region
+  const regionEconomicData = economicData.filter(item => item.regionId === regionId);
+  
+  // get specific metrics by indicatorId
+  return {
+    gdp: regionEconomicData.find(item => item.indicatorId === 1)?.value || 'N/A',
+    unemployment: regionEconomicData.find(item => item.indicatorId === 2)?.value || 'N/A',
+    inflationRate: regionEconomicData.find(item => item.indicatorId === 3)?.value || 'N/A'
     };
   };
 
@@ -103,7 +118,7 @@ useEffect(() => {
       <Card sx={{ mb: 3 }}>
         <CardContent>
           <Typography variant="h5" gutterBottom>
-            Welcome back, {user.firstName}
+            Welcome back {user.firstName}
           </Typography>
           <Typography color="text.secondary">
             Last updated: {new Date().toLocaleDateString()}
@@ -127,9 +142,8 @@ useEffect(() => {
               ) : (
                 <List>
                   {topRegions.map(region => (
-                    <ListItem 
+                    <ListItemButton 
                       key={region.id} 
-                      button
                       onClick={() => setSelectedRegion(region.id)}
                       selected={selectedRegion === region.id}
                     >
@@ -142,7 +156,7 @@ useEffect(() => {
                         primary={region.name}
                         //secondary={`${region.countries.length} countries`}
                       />
-                    </ListItem>
+                    </ListItemButton>
                   ))}
                 </List>
               )}
@@ -249,10 +263,9 @@ useEffect(() => {
                     {regionalData.find(r => r.id === (selectedRegion || regionalData[0]?.id))?.name || 'No region selected'}
                   </Typography>
                   <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
-                    <StatCard title="GDP Growth" value={`${summaryData.gdp || 'N/A'}%`} />
+                    <StatCard title="GDP" value={`${summaryData.gdp || 'N/A'}%`} />
                     <StatCard title="Unemployment" value={`${summaryData.unemployment || 'N/A'}%`} />
-                    <StatCard title="Inflation" value={`${summaryData.inflation || 'N/A'}%`} />
-                    <StatCard title="GDP Per Capita" value={`$${summaryData.gdpPerCapita || 'N/A'}`} />
+                    <StatCard title="Inflation" value={`${summaryData.inflationRate || 'N/A'}%`} />
                   </Box>
                   <Button 
                     fullWidth 

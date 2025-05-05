@@ -152,7 +152,7 @@ export function AppProvider({ children }) {
   };
 
   // Fetch indicator data
-  const fetchIndicatorData = async () => {
+  const fetchIndicatorData = useCallback(async () => {
     setLoading(true);
     setError(null); // Reset error state
     //console.log("Fetching indicator data...")
@@ -182,10 +182,10 @@ export function AppProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch Regional Data
-  const fetchRegionalData = async () => {
+  const fetchRegionalData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -213,10 +213,10 @@ export function AppProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch Economic Data
-  const fetchEconomicData = async () => {
+  const fetchEconomicData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -246,10 +246,10 @@ export function AppProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch Source Data
-  const fetchSourceData = async () => {
+  const fetchSourceData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -277,7 +277,7 @@ export function AppProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   return (
     <AppContext.Provider value={{

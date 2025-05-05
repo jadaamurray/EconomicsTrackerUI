@@ -9,7 +9,7 @@ const IndicatorsPage = () => {
         if (!loading && indicatorData.length === 0) {
             fetchIndicatorData();
         }
-    }, [loading, indicatorData, fetchIndicatorData]);    
+    }, [loading, indicatorData]);    
 
     if (loading) {
         return (

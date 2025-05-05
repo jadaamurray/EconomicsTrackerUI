@@ -3,8 +3,6 @@ import 'leaflet/dist/leaflet.css';
 import { useState } from 'react';
 import L from 'leaflet';
 import geoJsonData from '../data/regions-geo.json';
-
-// Fix for default marker icons in React
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -32,7 +30,7 @@ const EconomicMap = ({ regionalData }) => {
     radius: 8
   });
 
-  // Color based on GDP
+  // Colour based on GDP
   const getRegionColor = (gdp) => {
     if (!gdp) return '#cccccc';
     return gdp > 500 ? '#4daf4a' : // Green for high GDP

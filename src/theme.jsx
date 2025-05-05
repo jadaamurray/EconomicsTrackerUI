@@ -12,7 +12,7 @@ const theme = createTheme({
       main: '#E6B8B8', // Blush Pink
       light: '#F0D4D4',
       dark: '#D19C9C',
-      contrastText: '#2D3748' // Dark gray for contrast
+      contrastText: '#2D3748' // Dark grey for contrast
     },
     error: {
       main: '#D32F2F' // Standard red for errors
@@ -30,14 +30,14 @@ const theme = createTheme({
     },
     background: {
       default: '#FFFFFF', // White
-      paper: '#E0E0E0' // Light Gray
+      paper: '#E0E0E0' // Light Grey
     },
     text: {
-      primary: '#2D3748', // Dark gray for text
-      secondary: '#4A5568' // Lighter gray
+      primary: '#2D3748', // Dark grey for text
+      secondary: '#4A5568' // Lighter grey
     },
     action: {
-      active: '#708090' // Slate Gray for interactive elements
+      active: '#708090' // Slate Grey for interactive elements
     }
   },
   typography: {
@@ -49,7 +49,7 @@ const theme = createTheme({
       'sans-serif'
     ].join(','),
     h1: {
-      color: '#708090', // Slate Gray
+      color: '#708090', // Slate Grey
       fontWeight: 600
     },
     button: {
