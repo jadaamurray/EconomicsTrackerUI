@@ -1,29 +1,30 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import AuthForm from '../components/AuthForm'; // Import the reusable AuthForm
+import AuthForm from '../components/AuthForm';
 
-const LoginPage = () => {
-  const { login, loading } = useApp(); 
+const RegisterPage = () => {
+  const { register, loading } = useApp(); 
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (formData) => {
+    e.preventDefault();
     setError(null);
     try {
-      await login(formData); 
+      await register(formData); 
       navigate('/dashboard');
     } catch (error) {
       setError(
         error.response?.data?.message ||
         error.message ||
-        'Login failed. Please try again.');
+        'Registration failed. Please try again.');
     }
   };
 
   return (
     <AuthForm 
-      type="login"
+      type="register"
       onSubmit={handleSubmit}
       loading={loading}
       error={error}
@@ -31,4 +32,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

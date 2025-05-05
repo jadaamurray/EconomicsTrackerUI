@@ -10,6 +10,7 @@ import IndicatorsPage from './pages/Indicators.jsx';
 import AdminPage from './pages/Admin.jsx';
 import Header from './components/Header.jsx';
 import ProfilePage from './pages/Profile.jsx';
+import RegisterPage from './pages/Register.jsx';
 
 // Pages where header should be hidden
 const NO_HEADER_PATHS = ['/login', '/register'];
@@ -31,6 +32,7 @@ function App() {
         <main>
           < Routes >
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route
               path="/dashboard"
               element={

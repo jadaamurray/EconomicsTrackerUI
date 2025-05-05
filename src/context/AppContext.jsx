@@ -1,31 +1,3 @@
-/* api, jwt decode, AppProvider
- set toke, userrole and userid
- use states
- set loading to true when beginning fetch data
- async behaviour to check background activityand reduce delays
- api.get is a restful method for http
- write set methods for the api endpoints to change the state like setIndicator
- response consts like favouriteRes
- logout
- favourites functions */
-
-
-//Auth state
-// token, user role, userid
-
-//Add data state
-// indicators, favourites, data, sources, regions, loading, error
-
-//const isAuthenticated = !!token;
-
-// Fetch initial data - this is the first consumption of api
-//fetch indicators
-//    const indicatorResponse = await VITE_API_BASE_URL.get('/indicator');
-//fetch regions
-//fetch econ data
-//fetch data that may only work if authenticated like user data
-
-//fetch favourites based on decoded userId - if you are adding favourties
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthService, apiClient } from '../apiconfig';
@@ -88,27 +60,32 @@ export function AppProvider({ children }) {
     };
   }, []); */
 
+  // Register function
+  const register = async (formData) => {
+    setLoading(true);
+    try {
+      const response = await apiClient.post('Account/register', formData);
+    } catch (error) {
+      console.error('Register Error Details:', {
+        error: error.message,
+        response: error.response?.data
+      });
+      throw error; // Re-throw for component handling
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Login function
   const login = async (formData) => {
     setLoading(true);
     try {
-      //console.log('Making request to:', `${import.meta.env.VITE_API_BASE_URL}/Account/login`);
       const response = await apiClient.post('/Account/login', formData);
-      // DEBUG
-      /*console.group('[DEBUG] Response Inspection');
-      console.log('Full response:', response);
-      console.log('Status code:', response.status);
-      console.log('Has .data?:', 'data' in response);
-      console.log('Data type:', typeof response.data);
-      console.log('Data keys:', response.data ? Object.keys(response.data) : 'null');
-      console.groupEnd();*/
-      //
       if (!response.data?.token) {
         throw new Error(response.data?.message ||
           'Authentication token missing from server response'
         );
       }
-
       const userData = {
         token: response.data.token,
         id: response.data.userId,
@@ -119,18 +96,13 @@ export function AppProvider({ children }) {
       };
       localStorage.setItem('authToken', response.data.token);
       localStorage.setItem('user', JSON.stringify(userData));
+      /*
+      // Decode token to check expiry (client-side check)
+      const decoded = jwtDecode(token); // using 'jwt-decode' library
+      const expiryDate = new Date(decoded.exp * 1000);
+      console.log('Token expires at:', expiryDate); */
       setUser(userData);
       setIsAuthenticated(true);
-      // DEBUG
-      /*console.group('User information');
-      console.log('token: ', userData.token);
-      console.log('id: ', userData.id);
-      console.log('email: ', userData.email);
-      console.log('roles: ', userData.roles);
-      console.log('firstName: ', userData.firstName);
-      console.log('lastName: ', userData.lastName);
-      console.groupEnd();*/
-      //
       return userData;
     } catch (error) {
       console.error('Login Error Details:', {
@@ -294,11 +266,12 @@ export function AppProvider({ children }) {
       fetchEconomicData,
       economicData,
       fetchSourceData,
-      sourceData
+      sourceData,
+      register
     }}>
       {children}
     </AppContext.Provider>
-  ); // add economicdata and fetch economic data to values in provider
+  );
 }
 
 export function useApp() {
